@@ -5,8 +5,10 @@ Note that while this is actively maintained, Regression Games is only added API 
 as we need them. Feel free to contribute additional endpoints and objects and make a PR! The currently implemented
 components are:
 
-* None
+* GitHub Auth Client
+  * Request device code for device auth flow
+  * Poll device code for authorization status
+* GitHub Client
+  * Request user profile of logged in user
 
-## Getting Started
-
-## Examples
+More coming soon!
