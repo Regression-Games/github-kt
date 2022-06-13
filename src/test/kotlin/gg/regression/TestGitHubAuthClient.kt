@@ -79,5 +79,23 @@ class TestGitHubAuthClient : FeatureSpec({
             exception.errorDescription shouldBe "The authorization request is still pending."
             exception.errorUri shouldStartWith "https://docs"
         }
+
+        scenario("should throw an error when polling too fast") {
+            val exampleResponse = """
+                {
+                    "error": "slow_down",
+                    "error_description": "Too many requests have been made in the same timeframe.",
+                    "error_uri": "https://docs.github.com",
+                    "interval": 10
+                }
+            """.trimIndent()
+            val client = GitHubAuthClient("")
+            client.httpClient = getMockedClient(500, exampleResponse)
+            val exception = shouldThrow<DeviceFlowAuthorizationException> {
+                client.pollForAuthorization("sample device code")
+            }
+            exception.error shouldBe "slow_down"
+            exception.interval shouldBe 10
+        }
     }
 })

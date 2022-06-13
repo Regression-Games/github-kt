@@ -105,5 +105,5 @@ data class UserProfile(
     @JsonAlias("two_factor_authentication")
     val twoFactorAuthentication: Boolean,
 
-    val plan: Plan
+    val plan: Plan?
 )

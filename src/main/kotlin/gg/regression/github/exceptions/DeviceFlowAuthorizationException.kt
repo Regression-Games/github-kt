@@ -7,7 +7,8 @@ data class DeviceFlowAuthorizationException(
     @JsonAlias("error_description")
     val errorDescription: String?,
     @JsonAlias("error_uri")
-    val errorUri: String?
+    val errorUri: String?,
+    val interval: Int?
 ) : Exception()
 
 // TODO: Eventually we might make error an enum from

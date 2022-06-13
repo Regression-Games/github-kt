@@ -7,7 +7,7 @@ import io.kotest.matchers.shouldBe
 
 class TestGitHubClient : FeatureSpec({
 
-    feature("user profile access ") {
+    feature("user profile access") {
 
         scenario("should retrieve the user when authed") {
             val exampleResponse = """
@@ -63,7 +63,7 @@ class TestGitHubClient : FeatureSpec({
             val user = client.getLoggedInUser()
             user.login shouldBe "octocat"
             user.name shouldBe "monalisa octocat"
-            user.plan.privateRepos shouldBe 20
+            user.plan?.privateRepos shouldBe 20
         }
 
         scenario("should throw an error when unauthorized") {

@@ -14,14 +14,10 @@ open class HttpClient {
 
     var httpClient: OkHttpClient = OkHttpClient()
     val jsonMapper = jacksonObjectMapper()
-    val JSON: MediaType = "application/json; charset=utf-8".toMediaTypeOrNull()!!
+    val JSON: MediaType = "application/json; charset=utf-8".toMediaTypeOrNull()!! // .toMediaTypeOrNull()!!
 
     init {
         jsonMapper.registerModule(JavaTimeModule())
-    }
-
-    protected fun setMockClient(mock: Any) {
-        httpClient = mock as OkHttpClient
     }
 
     @Throws(HttpClientException::class, UnauthorizedException::class)
