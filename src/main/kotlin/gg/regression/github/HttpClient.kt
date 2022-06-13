@@ -1,7 +1,9 @@
 package gg.regression.github
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import gg.regression.github.exceptions.HttpClientException
 import gg.regression.github.exceptions.UnauthorizedException
 import okhttp3.MediaType
@@ -18,6 +20,7 @@ open class HttpClient {
 
     init {
         jsonMapper.registerModule(JavaTimeModule())
+        jsonMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     }
 
     @Throws(HttpClientException::class, UnauthorizedException::class)
@@ -29,11 +32,12 @@ open class HttpClient {
         httpClient.newCall(request).execute().use { response ->
             val jsonResult = response.body!!.string()
             try {
-                return jsonMapper.readValue(jsonResult, T::class.java)
+                return jsonMapper.readValue(jsonResult)
             } catch (exception: Exception) {
                 if (response.code == 401) {
                     throw UnauthorizedException()
                 }
+                println(exception)
                 throw HttpClientException(response.code, jsonResult)
             }
         }
@@ -51,7 +55,7 @@ open class HttpClient {
         httpClient.newCall(request).execute().use { response ->
             val jsonResult = response.body!!.string()
             try {
-                return jsonMapper.readValue(jsonResult, T::class.java)
+                return jsonMapper.readValue(jsonResult)
             } catch (exception: Exception) {
                 if (response.code == 401) {
                     throw UnauthorizedException()
