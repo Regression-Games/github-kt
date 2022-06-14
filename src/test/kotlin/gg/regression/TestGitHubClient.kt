@@ -362,4 +362,51 @@ class TestGitHubClient : FeatureSpec({
             commits[0].commit.message shouldBe "Fix all the bugs"
         }
     }
+
+    feature("getting the contents of a repository") {
+
+        scenario("should get the items of a directory") {
+            val exampleResponse = """
+                [
+                  {
+                    "type": "file",
+                    "size": 625,
+                    "name": "octokit.rb",
+                    "path": "lib/octokit.rb",
+                    "sha": "fff6fe3a23bf1c8ea0692b4a883af99bee26fd3b",
+                    "url": "https://api.github.com/repos/octokit/octokit.rb/contents/lib/octokit.rb",
+                    "git_url": "https://api.github.com/repos/octokit/octokit.rb/git/blobs/fff6fe3a23bf1c8ea0692b4a883af99bee26fd3b",
+                    "html_url": "https://github.com/octokit/octokit.rb/blob/master/lib/octokit.rb",
+                    "download_url": "https://raw.githubusercontent.com/octokit/octokit.rb/master/lib/octokit.rb",
+                    "_links": {
+                      "self": "https://api.github.com/repos/octokit/octokit.rb/contents/lib/octokit.rb",
+                      "git": "https://api.github.com/repos/octokit/octokit.rb/git/blobs/fff6fe3a23bf1c8ea0692b4a883af99bee26fd3b",
+                      "html": "https://github.com/octokit/octokit.rb/blob/master/lib/octokit.rb"
+                    }
+                  },
+                  {
+                    "type": "dir",
+                    "size": 0,
+                    "name": "octokit",
+                    "path": "lib/octokit",
+                    "sha": "a84d88e7554fc1fa21bcbc4efae3c782a70d2b9d",
+                    "url": "https://api.github.com/repos/octokit/octokit.rb/contents/lib/octokit",
+                    "git_url": "https://api.github.com/repos/octokit/octokit.rb/git/trees/a84d88e7554fc1fa21bcbc4efae3c782a70d2b9d",
+                    "html_url": "https://github.com/octokit/octokit.rb/tree/master/lib/octokit",
+                    "download_url": null,
+                    "_links": {
+                      "self": "https://api.github.com/repos/octokit/octokit.rb/contents/lib/octokit",
+                      "git": "https://api.github.com/repos/octokit/octokit.rb/git/trees/a84d88e7554fc1fa21bcbc4efae3c782a70d2b9d",
+                      "html": "https://github.com/octokit/octokit.rb/tree/master/lib/octokit"
+                    }
+                  }
+                ]
+            """.trimIndent()
+            val client = GitHubClient("oauth_code_here")
+            client.httpClient = getMockedClient(200, exampleResponse)
+            val items = client.listDirectory("RegressionGames", "client", "/")
+            items shouldHaveSize 2
+            items[0].type shouldBe "file"
+        }
+    }
 })

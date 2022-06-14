@@ -154,4 +154,20 @@ class GitHubClient(private val oauthToken: String) : HttpClient() {
         val queryUrl = httpBuilder.build().toString()
         return this.getAuthed(queryUrl, headers)
     }
+
+    fun listDirectory(
+        owner: String,
+        repo: String,
+        path: String,
+        ref: String? = null
+    ): List<DirectoryItem> {
+        val headers = mapOf("Accept" to "application/vnd.github.v3+json")
+        val url = "$baseUrl/repos/$owner/$repo/contents/${path.trimStart('/')}"
+        val httpBuilder = url.toHttpUrlOrNull()!!.newBuilder()
+        ref?.run {
+            httpBuilder.addQueryParameter("ref", this)
+        }
+        val queryUrl = httpBuilder.build().toString()
+        return this.getAuthed(queryUrl, headers)
+    }
 }
