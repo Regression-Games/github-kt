@@ -37,7 +37,7 @@ open class HttpClient {
                 if (response.code == 401) {
                     throw UnauthorizedException()
                 }
-                println(exception)
+                exception.printStackTrace()
                 throw HttpClientException(response.code, jsonResult)
             }
         }

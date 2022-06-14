@@ -82,4 +82,76 @@ class GitHubClient(private val oauthToken: String) : HttpClient() {
         val queryUrl = httpBuilder.build().toString()
         return this.getAuthed(queryUrl, headers)
     }
+
+    fun getBranches(
+        owner: String,
+        repo: String,
+        protected: Boolean? = null,
+        resultsPerPage: Int? = null,
+        pageNumber: Int? = null
+    ): List<Branch> {
+        val headers = mapOf("Accept" to "application/vnd.github.v3+json")
+        val url = "$baseUrl/repos/$owner/$repo/branches"
+        val httpBuilder = url.toHttpUrlOrNull()!!.newBuilder()
+        protected?.run {
+            httpBuilder.addQueryParameter("protected", this.toString())
+        }
+        resultsPerPage?.run {
+            httpBuilder.addQueryParameter("per_page", this.toString())
+        }
+        pageNumber?.run {
+            httpBuilder.addQueryParameter("page", this.toString())
+        }
+        val queryUrl = httpBuilder.build().toString()
+        return this.getAuthed(queryUrl, headers)
+    }
+
+    fun getCommits(
+        owner: String,
+        repo: String,
+        shaOrBranch: String? = null,
+        path: String? = null,
+        author: String? = null,
+        since: LocalDateTime? = null,
+        until: LocalDateTime? = null,
+        resultsPerPage: Int? = null,
+        pageNumber: Int? = null,
+    ): List<Commit> {
+        val headers = mapOf("Accept" to "application/vnd.github.v3+json")
+        val url = "$baseUrl/repos/$owner/$repo/commits"
+        val httpBuilder = url.toHttpUrlOrNull()!!.newBuilder()
+        shaOrBranch?.run {
+            httpBuilder.addQueryParameter("sha", this)
+        }
+        path?.run {
+            httpBuilder.addQueryParameter("path", this)
+        }
+        author?.run {
+            httpBuilder.addQueryParameter("author", this)
+        }
+        since?.run {
+            val tz = TimeZone.getTimeZone("UTC")
+            val df: DateFormat =
+                SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'") // Quoted "Z" to indicate UTC, no timezone offset
+            df.timeZone = tz
+            val nowAsISO = df.format(this)
+            httpBuilder.addQueryParameter("since", nowAsISO)
+        }
+        until?.run {
+            val tz = TimeZone.getTimeZone("UTC")
+            val df: DateFormat =
+                SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'") // Quoted "Z" to indicate UTC, no timezone offset
+            df.timeZone = tz
+            val nowAsISO = df.format(this)
+            httpBuilder.addQueryParameter("until", nowAsISO)
+        }
+        resultsPerPage?.run {
+            httpBuilder.addQueryParameter("per_page", this.toString())
+        }
+        pageNumber?.run {
+            httpBuilder.addQueryParameter("page", this.toString())
+        }
+        val queryUrl = httpBuilder.build().toString()
+        return this.getAuthed(queryUrl, headers)
+    }
 }
