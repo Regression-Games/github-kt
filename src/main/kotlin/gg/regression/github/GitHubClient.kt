@@ -34,7 +34,7 @@ class GitHubClient(private val oauthToken: String) : HttpClient() {
      */
     fun getRepositories(
         visibility: Visibility = Visibility.ALL,
-        affiliation: List<Affiliation>? = null,
+        affiliation: List<Affiliation>? = listOf(Affiliation.COLLABORATOR, Affiliation.OWNER, Affiliation.ORGANIZATION_MEMBER),
         sortMode: RepositorySortMode? = null,
         sortAscending: Boolean? = null,
         resultsPerPage: Int? = null,
@@ -80,6 +80,7 @@ class GitHubClient(private val oauthToken: String) : HttpClient() {
             httpBuilder.addQueryParameter("before", nowAsISO)
         }
         val queryUrl = httpBuilder.build().toString()
+        println(queryUrl)
         return this.getAuthed(queryUrl, headers)
     }
 
